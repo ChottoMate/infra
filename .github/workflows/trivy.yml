@@ -1,0 +1,24 @@
+name: Trivy Security Scan 🛡️
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  trivy-scan:
+    name: Trivy IaC Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 📥
+        uses: actions/checkout@v3
+
+      - name: Run Trivy vulnerability scanner 🕵️‍♂️
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'        # Terraformなどの設定ファイルをスキャンするモード
+          hide-progress: false       # ログをスッキリさせるか
+          exit-code: '1'             # 脆弱性が見つかったらCIを「失敗(Red)」にする設定（超重要！）
+          ignore-unfixed: true       # 修正パッチがないやつは無視（ノイズ減らし）
+          severity: 'CRITICAL,HIGH'  # 「ヤバい（Critical）」と「高い（High）」だけ検知する
